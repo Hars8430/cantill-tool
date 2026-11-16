@@ -1,0 +1,48 @@
+# configs/companyB.yaml
+# Company B: 8 ERPs, 25 currencies, no supplier names (vendor IDs only), no status column.
+
+company: B
+reporting_currency: USD
+output_prefix: harsh_singh
+
+files:
+  invoices: data/raw/company_B/invoice_lines.csv
+  fx: data/raw/company_B/fx_rates_usd.csv
+  taxonomy: data/raw/company_B/taxonomy_B.csv
+  labels: data/raw/company_B/seed_labels.csv   # evaluation only
+
+invoices:
+  record_id: line_id
+  vendor_id: vendor_id
+  supplier_name: null                     # not provided: keyed on vendor ID
+  description: line_description
+  material: material_number
+  gl_description: gl_account_description
+  document_type: document_type
+  date: posting_date
+  date_formats: ["%Y-%m-%d"]
+  amount: line_amount                     # treated as net: no VAT column
+  amount_is_net: true                     # ASSUMPTION, logged in DECISIONS.md
+  currency: currency
+  currency_rate: currency_rate            # units of currency per 1 USD; blank for USD and some others
+  quantity: null
+  status: null                            # no status column: all lines treated as approved
+
+fx:
+  currency_col: currency
+  month_col: month
+  rate_col: units_per_usd
+  month_from: posting_date                # FX month = posting month
+
+exclusions:
+  non_procurement:
+    gl_description_patterns:              # case-insensitive
+      - "^IC"
+      - "^I/C"
+      - "INTERCOMPANY"
+    description_patterns:                 # case-insensitive; taxes are non-procurement (brief section 5)
+      - "\\bTAX"
+      - "\\bGST\\b"
+      - "\\bVAT\\b"
+    # PEUS (top GL) is NOT excluded as a whole: seed labels show only its tax lines are non-spend
+    # document_type rules: not used (no document type pattern matched the seed labels cleanly)

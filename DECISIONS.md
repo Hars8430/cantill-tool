@@ -61,3 +61,16 @@ Assumptions and findings, recorded as we go. Newest at the bottom.
 - Included 42,047 rows; excluded 23,502 (DUPLICATE 22,999, NOT_APPROVED 315, CANCELLED 188). Total spend 2,909,918,069.88 ZAR.
 - Excluded rows have spend 0 and blank categories. l4 is blank: Company A's tree has three levels.
 - results/ is not gitignored, because the brief requires the A and B outputs in the repo. data/ stays ignored.
+
+## Company B ingestion and non-procurement (step 9)
+- 41,028 lines, 25 currencies. Currency rate: the line's own rate (units per USD). Where missing, the FX file for that currency and posting month. All 3,343 lines needing the FX file have a matching row. USD lines are not converted.
+- Amounts are treated as net. B has no VAT column. ASSUMPTION: line_amount is net.
+- No status column: all lines count as approved, except the three below.
+- Non-procurement rules, applied in this order:
+  1. GL description starts with IC or I/C, or contains INTERCOMPANY (intercompany).
+  2. Description contains TAX, GST or VAT as a word (taxes). Only the tax lines under PEUS and PECA are excluded. The rest of PEUS (about 90% of its labelled lines) is real spend and stays in.
+- Seed-label check (3,000 analyst labels): precision 1.0, recall 1.0 (450 of 450). CAUTION: these rules were tuned on the same seed labels, so the score on new data will be lower. Watch for new spellings (for example "I/C" with a different GL or new tax wording) in the blind test.
+- Three lines have a blank line_amount (currency RCN, GL AP - Other). Spend is 0 and they are excluded as NOT_APPROVED, because the amount cannot be verified.
+- Document types (PV, RE, and others) are not used for exclusion: no document-type rule matched the seed labels cleanly.
+- Total counted spend after these rules: 325,024,569.73 USD (before de-duplication and classification).
+- Still to do for B: de-duplication (suppliers keyed on vendor ID), item keys, classification into taxonomy_B, and the output file.
