@@ -26,7 +26,6 @@ erp:
   amount: value_zar              # already net, already ZAR
   amount_is_net: true
   quantity: quantity
-  status: null                   # no status column: posted lines count as approved
 
 tool:
   record_prefix: "TOOL"
@@ -37,7 +36,6 @@ tool:
   description: line_text
   date: invoice_date
   date_formats: ["%d/%m/%Y", "%Y-%m-%d", "%d-%b-%y"]   # day-first assumed for slash dates
-  date_missing: ~65% blank; use the ERP match's date where available
   amount: gross_amount
   amount_is_net: false
   thousands_separator: ","
@@ -45,7 +43,6 @@ tool:
   vat:
     column: vat_rate
     default_rate: 0.15           # blank means 15%, per brief
-    accepted_formats: ["15", "0.15", "15%", "0"]
   currency: currency
   quantity: quantity
   status:
@@ -57,14 +54,13 @@ tool:
       Rejected: NOT_APPROVED
 
 matching:
-  # tiers run in order; a record matched in one tier is not re-matched
   tiers:
     - name: po_plus_net_amount
     - name: fuzzy_supplier_amount_text
   # TODO after profiling: tolerance, fuzzy threshold, duplicate-invoice rule
 
 exclusions:
-  # TODO after profiling: NON_PROCUREMENT patterns (GL, document type, spend_type)
+  # TODO after profiling: NON_PROCUREMENT patterns
   # CANCELLED, NOT_APPROVED and DUPLICATE are set by the rules above and in matching
 
 output:
