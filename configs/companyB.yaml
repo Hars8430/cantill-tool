@@ -4,6 +4,7 @@
 company: B
 reporting_currency: USD
 output_prefix: harsh_singh
+output_tag: B   # blind test: change to B2
 
 files:
   invoices: data/raw/company_B/invoice_lines.csv

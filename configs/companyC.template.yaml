@@ -5,6 +5,7 @@
 company: C                       # C uses the one-system path (same as B); A is the two-system path
 reporting_currency: USD          # FILL: the currency the tree and totals are reported in
 output_prefix: harsh_singh
+output_tag: C
 
 files:
   invoices: data/raw/company_C/FILL.csv          # FILL: the blind-test invoice file

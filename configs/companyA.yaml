@@ -4,6 +4,7 @@
 company: A
 reporting_currency: ZAR
 output_prefix: harsh_singh
+output_tag: A   # blind test: change to A2
 
 files:
   erp: data/raw/company_A/erp_goods_receipts.csv

@@ -116,3 +116,8 @@ Assumptions and findings, recorded as we go. Newest at the bottom.
 - Runtime (sandbox, single run): Company B, 41,028 rows in 7 seconds. Company A, 65,549 rows in 22 seconds. The brief's limit is 25,000 lines in 60 minutes, so there is wide headroom even on a slower laptop.
 - Dry run: Company B's data with a retail taxonomy written for the test (30 leaves, 3 levels, a different industry). The pipeline ran with no code changes: every included line got L1 and L2, and every L3 is a name from the new tree. The category spread is not a quality signal, because mining data does not match a retail tree. The dry run tests plumbing, not accuracy.
 - Blank L3 in the dry run: 16,675 of 38,524 included lines fell below the 0.05 threshold. This is expected when the tree does not match the data.
+
+## Blind-test file names (step 16)
+- The brief requires submission files named yourname__A2.csv, yourname__B2.csv and yourname__C.csv. Each config now has an output_tag: A and B for the build, and A2 and B2 for the blind test (change the tag and the input file paths in the config on test day). Company C uses tag C.
+- Tested: a copy of the Company B config with tag B2 writes harsh_singh__B2.csv.
+- Blind-test submission folder (brief): submission/ holds the three CSVs and the Company C config.

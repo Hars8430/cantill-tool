@@ -58,7 +58,8 @@ if __name__ == "__main__":
     cfg = load_config(cfg_path)
     out = run_company(cfg_path)
     Path("results").mkdir(exist_ok=True)
-    target = Path("results") / f"{cfg['output_prefix']}__{cfg['company']}.csv"
+    tag = cfg.get("output_tag", cfg["company"])   # blind test uses A2, B2 and C (brief section 6)
+    target = Path("results") / f"{cfg['output_prefix']}__{tag}.csv"
     out.to_csv(target, index=False)
     print("wrote", target, "rows:", len(out))
     print("included:", out.include.sum(), "| excluded:", (out.include == 0).sum())
