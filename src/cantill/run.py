@@ -24,8 +24,8 @@ def run_company(cfg_path: str) -> pd.DataFrame:
     company = cfg["company"]
     if company == "A":
         df = match_company_a(ingest_company_a(cfg_path))   # two systems: match, then count once
-    elif company == "B":
-        df = ingest_company_b(cfg_path)                    # one system: nothing to match
+    elif company in ("B", "C"):
+        df = ingest_company_b(cfg_path)                    # one system: nothing to match (B and C share this path)
     else:
         raise ValueError(f"no ingestion for company {company} yet")
 

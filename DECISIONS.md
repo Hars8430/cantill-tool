@@ -96,3 +96,7 @@ Assumptions and findings, recorded as we go. Newest at the bottom.
 - The runner dispatches on the company field and accepts A or B only. A Company C config must set company to B (the one-system path) until the runner is extended. Changing this is the first thing to check on Thursday if the blind-test data has two systems.
 - The organisers' scoring for blank levels is unknown. The team lead chose to keep the 0.05 threshold. Revisit only if the organisers answer.
 - The LLM tier is not used (no API key). Its cost per 1,000 lines is zero in this submission.
+
+## Company C dispatch (step 13)
+- The runner now accepts company C on the one-system path (same as B). The template is set to company C.
+- Tested: a copy of the Company B config with company set to C runs and produces the same output as B.

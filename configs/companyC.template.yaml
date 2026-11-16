@@ -2,7 +2,7 @@
 # value marked FILL. Nothing in src/ should need changing: if it does, record why in DECISIONS.md.
 # Run:  python -m src.cantill.run configs/companyC.yaml
 
-company: B                       # the runner accepts A or B today. For a one-system company use B; see DECISIONS.md before changing this
+company: C                       # C uses the one-system path (same as B); A is the two-system path
 reporting_currency: USD          # FILL: the currency the tree and totals are reported in
 output_prefix: harsh_singh
 
