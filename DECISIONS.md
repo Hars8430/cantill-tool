@@ -47,3 +47,11 @@ Assumptions and findings, recorded as we go. Newest at the bottom.
 - Known gap: site names inside item text ("the Company", "Irenedale South") split one product into several items. A fix would strip site names from the text before comparing. Not yet done.
 - Tool lines inherit the item key of their matched ERP line. Unmatched tool lines get a key from their own normalised text.
 - Keys are deterministic (no Python hash values), so reruns give identical output.
+
+## Company A classification (step 7 findings)
+- Zero-label method: TF-IDF on character n-grams (3 to 5), comparing each item group's text with each tree node's L3 name. The item text is its most common description. Labels are not read by the classifier.
+- Candidate text: L3 name only. Adding the full path or the L2 name made accuracy worse, and adding the supplier name did not help at L3.
+- Confidence is the cosine similarity. It is not monotonic, so one threshold is a rough cut. Accuracy by band (raw predictions, spend-weighted): 0.00 to 0.05 band: 27% at L3 (69% of spend); 0.05 to 0.15: 65 to 69%; 0.15 to 0.20: 8%; above 0.20: 76 to 88%.
+- Chosen threshold: 0.05. Below it, L3 is blank and L1 and L2 are kept, following the brief's rule to return the parent level. This blanks 66% of spend at L3.
+- Result on Company A with labels hidden, spend-weighted: L1 51%, L2 42%, L3 22%. Without the threshold, L3 would be 41%. We have not yet been told how blank levels are scored. If blanks count as wrong, the threshold costs about 19 points at L3. Decision pending.
+- Not yet done: a better classifier (supplier-level priors, item-text cleaning of site names, and the optional LLM tier, which needs an API key we do not have).
