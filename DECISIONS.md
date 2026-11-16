@@ -38,3 +38,12 @@ Assumptions and findings, recorded as we go. Newest at the bottom.
 - 24,370 ERP lines have a blank vendor_id, and these are the same rows as the blank posting dates. Their supplier key is built from supplier_name, which is always present.
 - Decision: no NON_PROCUREMENT rule for Company A. Revisit only if the blind-test data shows non-spend that the rules miss.
 - Local tier only: no API keys available. The LLM tier is skipped.
+
+## Company A supplier and item de-duplication (step 6 findings)
+- Supplier names are normalised (legal suffixes removed, OCR spaces ignored) and clustered. Names merge only at similarity 90 or higher, within the same first three letters.
+- Against the analyst labels (labels_A.csv), every labelled supplier maps to exactly one of our keys, and no key of ours spans two labelled suppliers. 69 labelled suppliers match exactly.
+- The labels include one catch-all supplier, SG-f85711, covering 20,718 of the 24,370 ERP lines with no vendor ID, plus 173 lines that do have one. Those lines carry many different real supplier names (for example PRAHAVEN, OAKENT MINING, PELWICK), so the label is a placeholder, not a supplier. We key these lines by their own names and exclude the catch-all from scoring.
+- Items: ERP lines key on material number and merge materials whose normalised text is identical. The analyst labels have 2,427 items. We produce 2,763 for ERP lines.
+- Known gap: site names inside item text ("the Company", "Irenedale South") split one product into several items. A fix would strip site names from the text before comparing. Not yet done.
+- Tool lines inherit the item key of their matched ERP line. Unmatched tool lines get a key from their own normalised text.
+- Keys are deterministic (no Python hash values), so reruns give identical output.

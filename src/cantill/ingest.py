@@ -15,7 +15,7 @@ from .config import load_config
 
 COLUMNS = ["record_id", "source", "supplier_name", "supplier_id", "invoice_number",
            "po", "description", "date", "date_ok", "amount_net", "currency",
-           "status_code", "quantity"]
+           "status_code", "quantity", "item_id"]
 
 
 def parse_amount(series: pd.Series, thousands: str = ",") -> pd.Series:
@@ -78,6 +78,7 @@ def ingest_company_a(cfg_path: str) -> pd.DataFrame:
         "currency": cfg["reporting_currency"],
         "status_code": "",
         "quantity": parse_amount(erp[erp_cfg["quantity"]], thousands="").astype(float),
+        "item_id": erp[erp_cfg["item_id"]],
     })
 
     # ---- Tool: gross, needs VAT removed, may need a status check -------
@@ -106,6 +107,7 @@ def ingest_company_a(cfg_path: str) -> pd.DataFrame:
         "currency": cfg["reporting_currency"],
         "status_code": status_code,
         "quantity": parse_amount(tool[tool_cfg["quantity"]], thousands="").astype(float),
+        "item_id": "",
     })
 
     out = pd.concat([erp_out, tool_out], ignore_index=True)[COLUMNS]
