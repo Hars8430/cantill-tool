@@ -111,3 +111,8 @@ Assumptions and findings, recorded as we go. Newest at the bottom.
 - Known cost: Company A's L2 falls by about 4 points, because the prior sets L2 from the L3 parent, which differs from the original L2 for some lines.
 - Deviation from the brief's "classify each item group once": the prior changes lines per supplier, so the same item can get different categories under different suppliers. This is intended, and is noted here.
 - Totals are unchanged: Company A 2,909,918,069.88 ZAR; Company B 325,024,569.73 USD.
+
+## Runtime and dry run (step 15)
+- Runtime (sandbox, single run): Company B, 41,028 rows in 7 seconds. Company A, 65,549 rows in 22 seconds. The brief's limit is 25,000 lines in 60 minutes, so there is wide headroom even on a slower laptop.
+- Dry run: Company B's data with a retail taxonomy written for the test (30 leaves, 3 levels, a different industry). The pipeline ran with no code changes: every included line got L1 and L2, and every L3 is a name from the new tree. The category spread is not a quality signal, because mining data does not match a retail tree. The dry run tests plumbing, not accuracy.
+- Blank L3 in the dry run: 16,675 of 38,524 included lines fell below the 0.05 threshold. This is expected when the tree does not match the data.
