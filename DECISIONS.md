@@ -12,4 +12,4 @@ Assumptions and findings, recorded as we go. Newest at the bottom.
 
 ## Assumptions
 - Reporting currency: ZAR for A, USD for B and C.
-- <yourname> in output file names = "harsh" (to confirm before the build deadline).
+- Output file prefix: harsh_singh (so files are harsh_singh__A.csv, harsh_singh__B.csv, harsh_singh__A2.csv, etc.). Spaces are replaced with underscores in file names.
