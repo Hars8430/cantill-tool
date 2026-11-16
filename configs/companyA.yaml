@@ -1,0 +1,72 @@
+# configs/companyA.yaml
+# Everything company-specific lives here. Code never mentions column names directly.
+
+company: A
+reporting_currency: ZAR
+output_prefix: harsh_singh
+
+files:
+  erp: data/raw/company_A/erp_goods_receipts.csv
+  tool: data/raw/company_A/invoice_tool_export.csv
+  taxonomy: data/raw/company_A/taxonomy_A.csv
+  labels: data/raw/company_A/labels_A.csv   # evaluation only. The classifier never reads this.
+
+erp:
+  record_prefix: "ERP"
+  id: line_id
+  supplier_id: vendor_id
+  supplier_name: supplier_name
+  item_id: material_number
+  description_columns: [material_short_text, service_short_text]
+  po: po_number
+  po_item: po_item
+  spend_type: spend_type
+  date: posting_date
+  date_formats: ["%Y-%m-%d"]
+  amount: value_zar              # already net, already ZAR
+  amount_is_net: true
+  quantity: quantity
+  status: null                   # no status column: posted lines count as approved
+
+tool:
+  record_prefix: "TOOL"
+  id: tool_record_id
+  invoice_number: invoice_number
+  supplier_name: supplier_name_as_captured
+  po: po_reference
+  description: line_text
+  date: invoice_date
+  date_formats: ["%d/%m/%Y", "%Y-%m-%d", "%d-%b-%y"]   # day-first assumed for slash dates
+  date_missing: ~65% blank; use the ERP match's date where available
+  amount: gross_amount
+  amount_is_net: false
+  thousands_separator: ","
+  decimal_separator: "."
+  vat:
+    column: vat_rate
+    default_rate: 0.15           # blank means 15%, per brief
+    accepted_formats: ["15", "0.15", "15%", "0"]
+  currency: currency
+  quantity: quantity
+  status:
+    column: status
+    count_as_spend: ["Paid", "Approved"]
+    exclusions:
+      Cancelled: CANCELLED
+      "On Hold": NOT_APPROVED
+      Rejected: NOT_APPROVED
+
+matching:
+  # tiers run in order; a record matched in one tier is not re-matched
+  tiers:
+    - name: po_plus_net_amount
+    - name: fuzzy_supplier_amount_text
+  # TODO after profiling: tolerance, fuzzy threshold, duplicate-invoice rule
+
+exclusions:
+  # TODO after profiling: NON_PROCUREMENT patterns (GL, document type, spend_type)
+  # CANCELLED, NOT_APPROVED and DUPLICATE are set by the rules above and in matching
+
+output:
+  file_name: "{output_prefix}__A.csv"
+  columns: [record_id, include, exclusion_reason, supplier_key, item_key, spend, l1, l2, l3, l4, confidence]
