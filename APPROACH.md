@@ -91,6 +91,14 @@ not accuracy: mining data does not match a retail tree.
   FX lookup and do not change any Company A output.
 - Company C has not been run on real data. Its config is a template until the blind-test files arrive.
 
+## AI tools used
+
+- Claude (Anthropic), an AI assistant, was used throughout the build to write and debug the code,
+  draft this document, and suggest analysis steps. Every rule and number was checked against the data
+  and the seed or analyst labels before being used.
+- The tool itself uses no AI service. The optional LLM tier was not used, because no API key was
+  available. The tool runs unattended on new files with no network access.
+
 ## Decisions
 
 Every assumption and finding is recorded in DECISIONS.md, in the order it was made.
