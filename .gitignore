@@ -1,0 +1,9 @@
+# Confidential task data: never commit
+data/
+*.zip
+*.pdf
+outputs/
+__pycache__/
+.venv/
+.env
+*.pyc
