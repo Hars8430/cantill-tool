@@ -30,3 +30,11 @@ Assumptions and findings, recorded as we go. Newest at the bottom.
 - Counted spend after matching: ERP 2,553,223,000 ZAR (approx.) plus tool-only 356,695,200 ZAR (approx.), total about 2,909,918,070 ZAR. Net of VAT, before the NON_PROCUREMENT rules are applied.
 - Every PO and fuzzy match agrees on supplier name at 85% or higher. None were left unverified.
 - Not yet done: NON_PROCUREMENT exclusions, item de-duplication, supplier keys, classification. These are the next steps.
+
+## Company A non-procurement check (findings)
+- No NON_PROCUREMENT lines identified. Keyword search (tax, VAT, interest, royalty, levy, fee, bank, intercompany, rebate, financing, and similar) found only false hits (for example "ELEVATING" contains "FEE").
+- The analyst labels (labels_A.csv) use five procurement L1 categories and no non-spend category.
+- Negative ERP lines (434) are reversals. 279 pair exactly with a positive line on the same PO. Both sides of a pair are kept, so the pair nets to zero and no exclusion is needed. The 155 unpaired negatives reduce spend as recorded.
+- 24,370 ERP lines have a blank vendor_id, and these are the same rows as the blank posting dates. Their supplier key is built from supplier_name, which is always present.
+- Decision: no NON_PROCUREMENT rule for Company A. Revisit only if the blind-test data shows non-spend that the rules miss.
+- Local tier only: no API keys available. The LLM tier is skipped.
