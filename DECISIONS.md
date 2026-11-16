@@ -91,3 +91,8 @@ Assumptions and findings, recorded as we go. Newest at the bottom.
 - Correction to the step 10 entry: the Company B L3 figure of 39% was measured at threshold 0. At 0.05 it is 23%.
 - Totals are unchanged: they do not depend on the threshold. Company A 2,909,918,069.88 ZAR; Company B 325,024,569.73 USD.
 - Open risk: if the organisers score a blank L3 as wrong, this setting costs points. Ask them before Thursday if possible.
+
+## Company C preparation (step 12)
+- The runner dispatches on the company field and accepts A or B only. A Company C config must set company to B (the one-system path) until the runner is extended. Changing this is the first thing to check on Thursday if the blind-test data has two systems.
+- The organisers' scoring for blank levels is unknown. The team lead chose to keep the 0.05 threshold. Revisit only if the organisers answer.
+- The LLM tier is not used (no API key). Its cost per 1,000 lines is zero in this submission.
