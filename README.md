@@ -8,6 +8,7 @@ de-duplicate suppliers and items, and classify each line into a company's catego
     pip install -r requirements.txt
 
 ## Run (one command)
-    python -m cantill run --config configs/companyA.yaml
+    python -m src.cantill.run configs/companyA.yaml
 
-(Commands will be filled in as the pipeline is built.)
+Writes results/<output_prefix>__A.csv, one row per input record (excluded rows included).
+Labels in data/raw are used for evaluation only; the classifier never reads them.

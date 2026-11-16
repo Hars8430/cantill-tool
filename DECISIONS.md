@@ -55,3 +55,9 @@ Assumptions and findings, recorded as we go. Newest at the bottom.
 - Chosen threshold: 0.05. Below it, L3 is blank and L1 and L2 are kept, following the brief's rule to return the parent level. This blanks 66% of spend at L3.
 - Result on Company A with labels hidden, spend-weighted: L1 51%, L2 42%, L3 22%. Without the threshold, L3 would be 41%. We have not yet been told how blank levels are scored. If blanks count as wrong, the threshold costs about 19 points at L3. Decision pending.
 - Not yet done: a better classifier (supplier-level priors, item-text cleaning of site names, and the optional LLM tier, which needs an API key we do not have).
+
+## Company A output (step 8)
+- Output file: results/harsh_singh__A.csv, 65,549 rows (37,029 ERP + 28,520 TOOL), one per input record. No duplicate record IDs.
+- Included 42,047 rows; excluded 23,502 (DUPLICATE 22,999, NOT_APPROVED 315, CANCELLED 188). Total spend 2,909,918,069.88 ZAR.
+- Excluded rows have spend 0 and blank categories. l4 is blank: Company A's tree has three levels.
+- results/ is not gitignored, because the brief requires the A and B outputs in the repo. data/ stays ignored.
