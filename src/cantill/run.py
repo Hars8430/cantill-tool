@@ -1,7 +1,8 @@
-"""One command, end to end: ingest -> match -> de-duplicate -> classify -> write the output file.
+"""One command for any company, driven by its config.
 
 Usage:  python -m src.cantill.run configs/companyA.yaml
-Writes results/<output_prefix>__A.csv (one row per input record, excluded rows included).
+        python -m src.cantill.run configs/companyB.yaml
+Writes results/<output_prefix>__<company>.csv, one row per input record (excluded rows included).
 """
 import sys
 from pathlib import Path
@@ -9,6 +10,7 @@ import pandas as pd
 
 from .config import load_config
 from .ingest import ingest_company_a
+from .ingest_b import ingest_company_b
 from .match import match_company_a, norm_name
 from .dedupe import build_keys
 from .classify import classify_items
@@ -17,9 +19,16 @@ OUT_COLUMNS = ["record_id", "include", "exclusion_reason", "supplier_key", "item
                "spend", "l1", "l2", "l3", "l4", "confidence"]
 
 
-def run_company_a(cfg_path: str) -> pd.DataFrame:
+def run_company(cfg_path: str) -> pd.DataFrame:
     cfg = load_config(cfg_path)
-    df = match_company_a(ingest_company_a(cfg_path))
+    company = cfg["company"]
+    if company == "A":
+        df = match_company_a(ingest_company_a(cfg_path))   # two systems: match, then count once
+    elif company == "B":
+        df = ingest_company_b(cfg_path)                    # one system: nothing to match
+    else:
+        raise ValueError(f"no ingestion for company {company} yet")
+
     df["supplier_norm"] = df["supplier_name"].map(norm_name)
     df = build_keys(df)
     items = classify_items(df, cfg["files"]["taxonomy"])
@@ -46,11 +55,13 @@ def run_company_a(cfg_path: str) -> pd.DataFrame:
 if __name__ == "__main__":
     cfg_path = sys.argv[1] if len(sys.argv) > 1 else "configs/companyA.yaml"
     cfg = load_config(cfg_path)
-    out = run_company_a(cfg_path)
+    out = run_company(cfg_path)
     Path("results").mkdir(exist_ok=True)
-    target = Path("results") / f"{cfg['output_prefix']}__A.csv"
+    target = Path("results") / f"{cfg['output_prefix']}__{cfg['company']}.csv"
     out.to_csv(target, index=False)
     print("wrote", target, "rows:", len(out))
     print("included:", out.include.sum(), "| excluded:", (out.include == 0).sum())
     print("exclusion reasons:", out.exclusion_reason[out.include == 0].value_counts().to_dict())
-    print("total spend ZAR:", round(out.spend.sum(), 2))
+    print("total spend:", round(out.spend.sum(), 2))
+    print("distinct suppliers:", out.loc[out.include == 1, "supplier_key"].nunique(),
+          "| distinct items:", out.loc[out.include == 1, "item_key"].nunique())

@@ -74,3 +74,20 @@ Assumptions and findings, recorded as we go. Newest at the bottom.
 - Document types (PV, RE, and others) are not used for exclusion: no document-type rule matched the seed labels cleanly.
 - Total counted spend after these rules: 325,024,569.73 USD (before de-duplication and classification).
 - Still to do for B: de-duplication (suppliers keyed on vendor ID), item keys, classification into taxonomy_B, and the output file.
+
+## Generic runner and threshold (step 10)
+- Classifier threshold set to 0: every item group gets an L3 answer. Reason: on Company A, L3 accuracy (spend-weighted) is 41% with no threshold and 22% at 0.05. Parent-level fallback is kept in the code (set CONF_THRESHOLD above 0 to enable) in case the organisers credit partial answers.
+- One runner for both companies: python -m src.cantill.run configs/companyX.yaml. It dispatches on the config's company field and writes results/<prefix>__<company>.csv.
+- Company B supplier keys: one key per vendor ID (VB-<vendor_id>). Fuzzy name clustering is not used for B, because similar vendor IDs can be different vendors.
+- Company B output: 41,028 rows, unique record IDs. Included 38,524; excluded 2,504 (NON_PROCUREMENT 2,501; NOT_APPROVED 3). Total counted spend 325,024,569.73 USD. Distinct suppliers 3,907 (vendor IDs); distinct items 6,171.
+- Company B classification baseline on its 2,550 labelled included lines (spend-weighted): L1 48%, L2 47%, L3 39%.
+- Company A output unchanged at the new threshold: 65,549 rows, 42,047 included, 2,909,918,069.88 ZAR.
+
+## Threshold reverted to 0.05 (step 11, decided by the team lead)
+- CONF_THRESHOLD = 0.05. Below it, L3 is blank and the parent level (L1, L2) is kept, following the brief's rule.
+- Measured accuracy at 0.05 (spend-weighted, labels hidden from the classifier):
+  - Company A: L1 51%, L2 42%, L3 22%.
+  - Company B (seed-labelled included lines, 2,550 rows): L1 48%, L2 47%, L3 23%.
+- Correction to the step 10 entry: the Company B L3 figure of 39% was measured at threshold 0. At 0.05 it is 23%.
+- Totals are unchanged: they do not depend on the threshold. Company A 2,909,918,069.88 ZAR; Company B 325,024,569.73 USD.
+- Open risk: if the organisers score a blank L3 as wrong, this setting costs points. Ask them before Thursday if possible.

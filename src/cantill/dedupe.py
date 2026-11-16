@@ -65,11 +65,14 @@ def item_text_key(text: str) -> str:
 
 def build_keys(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
-    km = supplier_keys(df["supplier_norm"])
+    is_b = df["source"] == "B"
+    # Company B has vendor IDs only: one key per vendor ID, no fuzzy merging (similar IDs are different vendors)
+    km = supplier_keys(df.loc[~is_b, "supplier_norm"])
     df["supplier_key"] = df["supplier_norm"].map(km).fillna("")
+    df.loc[is_b, "supplier_key"] = "VB-" + df.loc[is_b, "supplier_id"]
 
     # ERP item key: material number, then merge materials that share the same normalised text
-    erp = df["source"] == "ERP"
+    erp = df["source"].isin(["ERP", "B"])  # catalogue-side records: ERP for A, invoice lines for B
     mat = df.loc[erp, "item_id"]
     erp_text = df.loc[erp, "description"].map(item_text_key)
     text_to_key = {}

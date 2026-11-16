@@ -61,6 +61,8 @@ def ingest_company_b(cfg_path: str) -> pd.DataFrame:
         "item_id": b[ic["material"]],
     })
     out.loc[amount.isna(), "amount_net"] = 0.0
+    out["matched_to"] = ""      # Company B has one system: nothing to match
+    out["match_tier"] = ""
     out["rate_source"] = np.where(is_usd, "USD", np.where(usd_rate > 0, "line", "fx_file"))
     return out
 

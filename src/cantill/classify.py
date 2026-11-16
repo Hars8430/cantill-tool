@@ -14,7 +14,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from .config import load_config
 
-CONF_THRESHOLD = 0.05  # below this, L3 is blank (brief: return parent level). Chosen from accuracy by band, see DECISIONS.md
+CONF_THRESHOLD = 0.05  # below this, L3 is blank and the parent level is kept (brief rule). Chosen by you; see DECISIONS.md
 
 
 def clean(text: str) -> str:
