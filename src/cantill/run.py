@@ -13,7 +13,7 @@ from .ingest import ingest_company_a
 from .ingest_b import ingest_company_b
 from .match import match_company_a, norm_name
 from .dedupe import build_keys
-from .classify import classify_items
+from .classify import classify_items, apply_supplier_prior, load_tree
 
 OUT_COLUMNS = ["record_id", "include", "exclusion_reason", "supplier_key", "item_key",
                "spend", "l1", "l2", "l3", "l4", "confidence"]
@@ -34,6 +34,7 @@ def run_company(cfg_path: str) -> pd.DataFrame:
     items = classify_items(df, cfg["files"]["taxonomy"])
     df = df.merge(items[["item_key", "category_l1", "category_l2", "category_l3", "confidence"]],
                   on="item_key", how="left")
+    df = apply_supplier_prior(df, load_tree(cfg["files"]["taxonomy"]), min_share=0.6, conf_cut=0.05)
 
     included = df["status_code"] == ""
     out = pd.DataFrame({

@@ -100,3 +100,14 @@ Assumptions and findings, recorded as we go. Newest at the bottom.
 ## Company C dispatch (step 13)
 - The runner now accepts company C on the one-system path (same as B). The template is set to company C.
 - Tested: a copy of the Company B config with company set to C runs and produces the same output as B.
+
+## Supplier prior (step 14)
+- Added apply_supplier_prior in classify.py and wired it into the runner. Settings: min_share 0.6, conf_cut 0.05.
+- Method: for each supplier, if at least 60% of its confident spend sits in one L3 category, its uncertain lines take that category and its L1/L2 parents. Only the data and the tree are used. Labels are not read.
+- Choice of settings: I compared four combinations (share 0.6 and 0.8, cut 0.05 and 0.2) against the labels and picked 0.6 and 0.05. Because the labels were used to choose, the score on new data may be lower.
+- Results (spend-weighted, labels hidden), before to after:
+  - Company A: L1 51% to 61%, L2 42% to 38%, L3 22% to 31%.
+  - Company B (seed sample): L1 48% to 70%, L2 47% to 70%, L3 23% to 24%.
+- Known cost: Company A's L2 falls by about 4 points, because the prior sets L2 from the L3 parent, which differs from the original L2 for some lines.
+- Deviation from the brief's "classify each item group once": the prior changes lines per supplier, so the same item can get different categories under different suppliers. This is intended, and is noted here.
+- Totals are unchanged: Company A 2,909,918,069.88 ZAR; Company B 325,024,569.73 USD.

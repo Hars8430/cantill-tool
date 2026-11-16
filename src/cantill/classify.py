@@ -75,3 +75,35 @@ if __name__ == "__main__":
     print("item groups:", len(items), "| below threshold:", (items.category_l3 == "").sum())
     print("spend-weighted share below threshold:", round(items.loc[items.category_l3 == "", "spend"].sum() / items.spend.sum(), 3))
     print(items.sort_values("spend", ascending=False).head(8)[["text", "category_l2", "category_l3", "confidence"]].to_string())
+
+
+def apply_supplier_prior(df: pd.DataFrame, tree: pd.DataFrame, min_share: float = 0.6,
+                         conf_cut: float = 0.05) -> pd.DataFrame:
+    """Zero-label supplier prior.
+
+    For each supplier, look at its confident lines (confidence >= conf_cut) and find the L3 category
+    holding the largest spend share. If that share is at least min_share, the supplier's uncertain
+    lines (below conf_cut, or with blank L3) take that L3 and its L1/L2 parents.
+    Uses only the data and the tree. Labels are never read.
+    """
+    df = df.copy()
+    inc = df[df["status_code"] == ""]
+    strong = inc[(inc["confidence"] >= conf_cut) & (inc["category_l3"] != "")]
+    if strong.empty:
+        return df
+    spend = strong.groupby(["supplier_key", "category_l3"])["amount_net"].sum()
+    totals = spend.groupby(level=0).sum()
+    top = spend.groupby(level=0).idxmax().map(lambda t: t[1])
+    share = spend.groupby(level=0).max() / totals
+    prior_l3 = top[share >= min_share]
+
+    parents = tree.drop_duplicates("category_l3").set_index("category_l3")[["category_l1", "category_l2"]]
+    weak = ((df["status_code"] == "") & ((df["confidence"] < conf_cut) | (df["category_l3"] == ""))
+            & df["supplier_key"].isin(prior_l3.index))
+    if weak.any():
+        l3 = df.loc[weak, "supplier_key"].map(prior_l3)
+        df.loc[weak, "category_l3"] = l3.values
+        df.loc[weak, "category_l1"] = l3.map(parents["category_l1"]).values
+        df.loc[weak, "category_l2"] = l3.map(parents["category_l2"]).values
+        df.loc[weak, "confidence"] = conf_cut
+    return df
