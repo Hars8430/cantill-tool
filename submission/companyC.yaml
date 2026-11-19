@@ -1,33 +1,40 @@
-# TEMPLATE for the blind-test company. Copy to configs/companyC.yaml on Thursday and fill in every
-# value marked FILL. Nothing in src/ should need changing: if it does, record why in DECISIONS.md.
-# Run:  python -m src.cantill.run configs/companyC.yaml
+# configs/companyC.yaml
+# KNOWN LIMITATIONS (stated honestly):
+#  - Cancelled lines (106) are excluded as NOT_APPROVED, not CANCELLED: the one-system path cannot read status.
+#  - Tax rule is a text match. A few real purchases mention "GST" or "tax included" and are excluded.
+#  - Level 4 of the four-level tree is not written (the tool writes three levels).
+#  - Supplier key is the supplier name (no vendor IDs), so suppliers are not merged.
+#  - Input preparation: data/prep_C.py (a data step run before the unchanged tool).
+# Company C: one system, USD amounts, supplier names only (no vendor IDs), four-level tree (level 4 not scored).
+# Data was prepared by data/prep_C.py (a data step, no code change). Cancelled lines were blanked, so the
+# tool excludes them as NOT_APPROVED. Their code would be CANCELLED if the tool could read status.
 
-company: C                       # C uses the one-system path (same as B); A is the two-system path
-reporting_currency: USD          # FILL: the currency the tree and totals are reported in
+company: C
+reporting_currency: USD
 output_prefix: harsh_singh
 output_tag: C
 
 files:
-  invoices: data/raw/company_C/FILL.csv          # FILL: the blind-test invoice file
-  fx: data/raw/company_C/fx_rates_usd.csv        # FILL: only if the data has non-USD lines
-  taxonomy: data/raw/company_C/FILL_taxonomy.csv # FILL: the unseen category tree
+  invoices: data/blind/C/prepared/invoice_lines.csv
+  fx: data/blind/C/prepared/fx_empty.csv
+  taxonomy: data/blind/C/prepared/taxonomy_C.csv
 
 invoices:
-  record_id: FILL                 # unique per line
-  vendor_id: FILL                 # FILL (or null if the file has supplier names only)
-  supplier_name: FILL_or_null
-  description: FILL               # the line text the classifier reads
-  material: FILL_or_null
-  gl_description: FILL_or_null    # used for intercompany exclusion
-  document_type: FILL_or_null
-  date: FILL
-  date_formats: ["%Y-%m-%d"]      # FILL: add the formats seen in the file
-  amount: FILL
-  amount_is_net: true             # FILL: check whether amounts include VAT and record the answer
-  currency: FILL
-  currency_rate: FILL_or_null
-  quantity: FILL_or_null
-  status: null                    # FILL: a status column and its values, if any
+  record_id: line_id
+  vendor_id: vendor_id
+  supplier_name: null
+  description: line_description
+  material: material_number
+  gl_description: gl_account_description
+  document_type: null
+  date: posting_date
+  date_formats: ["%Y-%m-%d"]
+  amount: line_amount
+  amount_is_net: true
+  currency: currency
+  currency_rate: currency_rate
+  quantity: quantity
+  status: null
 
 fx:
   currency_col: currency
